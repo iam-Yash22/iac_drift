@@ -1,0 +1,1 @@
+{"resources":[{"mode":"managed","type":"aws_s3_bucket","name":"b1","instances":[{"attributes":{"bucket":"b1-740122274365","arn":"arn:aws:s3:::b1-740122274365","tags":{"Name":"b1-740122274365","ManagedBy":"Terraform","Application":"IaC DriftWatch"}}}]}]}

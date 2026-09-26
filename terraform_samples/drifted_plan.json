@@ -1,0 +1,331 @@
+{
+  "format_version": "1.0",
+  "terraform_version": "1.5.0",
+  "timestamp": "2026-08-14T00:00:00Z",
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_security_group.baseline",
+          "type": "aws_security_group",
+          "name": "baseline",
+          "values": {
+            "arn": "arn:aws:ec2:us-east-1:123456789012:security-group/sg-1234567890abcdef0",
+            "description": "Baseline security group for fixture testing",
+            "egress": [
+              {
+                "cidr_blocks": [
+                  "0.0.0.0/0"
+                ],
+                "description": "",
+                "from_port": 0,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "-1",
+                "security_groups": [],
+                "self": false,
+                "to_port": 0
+              }
+            ],
+            "id": "sg-1234567890abcdef0",
+            "ingress": [
+              {
+                "cidr_blocks": [
+                  "10.0.0.0/16"
+                ],
+                "description": "SSH access",
+                "from_port": 22,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 22
+              },
+              {
+                "cidr_blocks": [
+                  "203.0.113.0/24"
+                ],
+                "description": "Administrative access",
+                "from_port": 443,
+                "ipv6_cidr_blocks": [],
+                "prefix_list_ids": [],
+                "protocol": "tcp",
+                "security_groups": [],
+                "self": false,
+                "to_port": 443
+              }
+            ],
+            "name": "baseline-sg",
+            "revoke_rules_on_delete": false,
+            "tags": {},
+            "vpc_id": "vpc-12345678"
+          }
+        },
+        {
+          "address": "aws_instance.baseline",
+          "type": "aws_instance",
+          "name": "baseline",
+          "values": {
+            "ami": "ami-12345678",
+            "instance_type": "t3.micro",
+            "subnet_id": "subnet-12345678",
+            "tags": {
+              "Name": "baseline-instance"
+            },
+            "vpc_security_group_ids": [
+              "sg-1234567890abcdef0"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_security_group.baseline",
+      "before": {
+        "arn": "arn:aws:ec2:us-east-1:123456789012:security-group/sg-1234567890abcdef0",
+        "description": "Baseline security group for fixture testing",
+        "egress": [
+          {
+            "cidr_blocks": [
+              "0.0.0.0/0"
+            ],
+            "description": "",
+            "from_port": 0,
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "protocol": "-1",
+            "security_groups": [],
+            "self": false,
+            "to_port": 0
+          }
+        ],
+        "id": "sg-1234567890abcdef0",
+        "ingress": [
+          {
+            "cidr_blocks": [
+              "10.0.0.0/16"
+            ],
+            "description": "SSH access",
+            "from_port": 22,
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "protocol": "tcp",
+            "security_groups": [],
+            "self": false,
+            "to_port": 22
+          }
+        ],
+        "name": "baseline-sg",
+        "revoke_rules_on_delete": false,
+        "tags": {},
+        "vpc_id": "vpc-12345678"
+      },
+      "after": {
+        "arn": "arn:aws:ec2:us-east-1:123456789012:security-group/sg-1234567890abcdef0",
+        "description": "Baseline security group for fixture testing",
+        "egress": [
+          {
+            "cidr_blocks": [
+              "0.0.0.0/0"
+            ],
+            "description": "",
+            "from_port": 0,
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "protocol": "-1",
+            "security_groups": [],
+            "self": false,
+            "to_port": 0
+          }
+        ],
+        "id": "sg-1234567890abcdef0",
+        "ingress": [
+          {
+            "cidr_blocks": [
+              "10.0.0.0/16"
+            ],
+            "description": "SSH access",
+            "from_port": 22,
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "protocol": "tcp",
+            "security_groups": [],
+            "self": false,
+            "to_port": 22
+          },
+          {
+            "cidr_blocks": [
+              "203.0.113.0/24"
+            ],
+            "description": "Administrative access",
+            "from_port": 443,
+            "ipv6_cidr_blocks": [],
+            "prefix_list_ids": [],
+            "protocol": "tcp",
+            "security_groups": [],
+            "self": false,
+            "to_port": 443
+          }
+        ],
+        "name": "baseline-sg",
+        "revoke_rules_on_delete": false,
+        "tags": {},
+        "vpc_id": "vpc-12345678"
+      },
+      "type": "aws_security_group",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before_sensitive": {},
+        "after_sensitive": {},
+        "before": {
+          "ingress": [
+            {
+              "cidr_blocks": [
+                "10.0.0.0/16"
+              ],
+              "description": "SSH access",
+              "from_port": 22,
+              "ipv6_cidr_blocks": [],
+              "prefix_list_ids": [],
+              "protocol": "tcp",
+              "security_groups": [],
+              "self": false,
+              "to_port": 22
+            }
+          ]
+        },
+        "after": {
+          "ingress": [
+            {
+              "cidr_blocks": [
+                "10.0.0.0/16"
+              ],
+              "description": "SSH access",
+              "from_port": 22,
+              "ipv6_cidr_blocks": [],
+              "prefix_list_ids": [],
+              "protocol": "tcp",
+              "security_groups": [],
+              "self": false,
+              "to_port": 22
+            },
+            {
+              "cidr_blocks": [
+                "203.0.113.0/24"
+              ],
+              "description": "Administrative access",
+              "from_port": 443,
+              "ipv6_cidr_blocks": [],
+              "prefix_list_ids": [],
+              "protocol": "tcp",
+              "security_groups": [],
+              "self": false,
+              "to_port": 443
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_security_group.baseline",
+          "type": "aws_security_group",
+          "name": "baseline",
+          "expressions": {
+            "description": {
+              "constant_value": "Baseline security group for fixture testing"
+            },
+            "ingress": [
+              {
+                "references": [
+                  "aws_security_group.baseline.id"
+                ],
+                "constant_value": {
+                  "cidr_blocks": [
+                    "10.0.0.0/16"
+                  ],
+                  "description": "SSH access",
+                  "from_port": 22,
+                  "ipv6_cidr_blocks": [],
+                  "prefix_list_ids": [],
+                  "protocol": "tcp",
+                  "security_groups": [],
+                  "self": false,
+                  "to_port": 22
+                }
+              }
+            ],
+            "name": {
+              "constant_value": "baseline-sg"
+            },
+            "vpc_id": {
+              "constant_value": "vpc-12345678"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "prior_state": {
+    "format_version": "1.0",
+    "terraform_version": "1.5.0",
+    "values": {
+      "root_module": {
+        "resources": [
+          {
+            "address": "aws_security_group.baseline",
+            "type": "aws_security_group",
+            "name": "baseline",
+            "values": {
+              "arn": "arn:aws:ec2:us-east-1:123456789012:security-group/sg-1234567890abcdef0",
+              "description": "Baseline security group for fixture testing",
+              "egress": [
+                {
+                  "cidr_blocks": [
+                    "0.0.0.0/0"
+                  ],
+                  "description": "",
+                  "from_port": 0,
+                  "ipv6_cidr_blocks": [],
+                  "prefix_list_ids": [],
+                  "protocol": "-1",
+                  "security_groups": [],
+                  "self": false,
+                  "to_port": 0
+                }
+              ],
+              "id": "sg-1234567890abcdef0",
+              "ingress": [
+                {
+                  "cidr_blocks": [
+                  "10.0.0.0/16"
+                ],
+                  "description": "SSH access",
+                  "from_port": 22,
+                  "ipv6_cidr_blocks": [],
+                  "prefix_list_ids": [],
+                  "protocol": "tcp",
+                  "security_groups": [],
+                  "self": false,
+                  "to_port": 22
+                }
+              ],
+              "name": "baseline-sg",
+              "revoke_rules_on_delete": false,
+              "tags": {},
+              "vpc_id": "vpc-12345678"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

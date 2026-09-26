@@ -1,0 +1,77 @@
+pipeline {
+  agent any
+
+  // Scheduled trigger runs the pipeline periodically for drift checks.
+  triggers {
+    cron('H H * * *')
+  }
+
+  environment {
+    // These environment variables should be provided by Jenkins credentials or job config.
+    AWS_REGION = "us-east-1"
+    // ECR_ACCOUNT_ID, ECR_REPO should be configured in the job or via credentials
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Build') {
+      steps {
+        sh 'docker build -t app:latest .'
+      }
+    }
+
+    stage('Test') {
+      steps {
+        sh 'echo "Run unit/integration tests here"'
+      }
+    }
+
+    stage('Push to ECR') {
+      when {
+        branch 'main'
+      }
+      steps {
+        // AWS credentials must be provided by Jenkins; do NOT hardcode secrets here.
+        withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          sh '''
+            set -e
+            aws --version
+            aws configure set default.region ${AWS_REGION}
+            aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+            docker tag app:latest ${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${BUILD_NUMBER}
+            docker push ${ECR_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:${BUILD_NUMBER}
+          '''
+        }
+      }
+    }
+
+    stage('Terraform Deploy') {
+      when {
+        branch 'main'
+      }
+      steps {
+        sh 'echo "Trigger Terraform apply or kick off deploy pipeline here"'
+      }
+    }
+
+    stage('Drift Monitor') {
+      when {
+        expression { return env.BRANCH_NAME == null }
+      }
+      steps {
+        sh 'echo "Running scheduled drift-monitor checks (no deploy)"'
+      }
+    }
+  }
+
+  post {
+    always {
+      sh 'docker system prune -af || true'
+    }
+  }
+}

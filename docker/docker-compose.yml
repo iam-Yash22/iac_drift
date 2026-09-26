@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./:/app:delegated
+    healthcheck:
+      test: ["CMD-SHELL", "/app/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    command: ["/app/entrypoint.sh"]
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: program
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: iac_driftwatch
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
