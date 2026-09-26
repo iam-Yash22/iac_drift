@@ -19,7 +19,10 @@ target_metadata = Base.metadata
 
 
 def get_database_url() -> str:
-    return str(settings.database.url)
+    database_url = settings.database.url
+    if database_url is None:
+        raise RuntimeError("DATABASE__URL must be configured before running Alembic migrations.")
+    return str(database_url)
 
 
 config.set_main_option("sqlalchemy.url", get_database_url())

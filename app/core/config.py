@@ -17,6 +17,8 @@ Usage::
 
 from __future__ import annotations
 
+import os
+import sys
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Literal
@@ -82,7 +84,7 @@ class ApplicationSettings(BaseModel):
     version: str = Field(default="0.1.0", description="Semantic version string.")
     environment: Literal["development", "staging", "production", "test"] = Field(
         default="development",
-        validation_alias=AliasChoices("ENVIRONMENT", "APP_ENVIRONMENT", "APP__ENVIRONMENT"),
+        validation_alias=AliasChoices("ENVIRONMENT", "APP_ENV", "APP_ENVIRONMENT", "APP__ENVIRONMENT"),
         description="Deployment environment.",
     )
     debug: bool = Field(default=False, description="Enable debug mode (never in production).")
@@ -99,8 +101,9 @@ class ApplicationSettings(BaseModel):
 class DatabaseSettings(BaseModel):
     """PostgreSQL connection and pool settings."""
 
-    url: PostgresDsn = Field(
-        default="postgresql+psycopg2://program:postgres@localhost:5432/iac_driftwatch",
+    url: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("DATABASE_URL", "DATABASE__URL"),
         description="SQLAlchemy-compatible database URL.",
     )
     echo: bool = Field(default=False, description="Echo SQL statements to logs.")
@@ -329,7 +332,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _validate_bootstrap_admin_credentials(self) -> Settings:
-        if (self.app.environment or "development").lower() == "development":
+        environment_name = (self.app.environment or "development").lower()
+        if environment_name in {"development", "test"}:
             return self
 
         password = self.admin_password.get_secret_value() if self.admin_password else ""
@@ -347,7 +351,34 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """Return the cached ``Settings`` singleton."""
-    return Settings()
+    database_settings = DatabaseSettings()
+    is_test_runtime = (
+        "pytest" in sys.modules
+        or os.getenv("APP_ENV", "").lower() == "test"
+        or os.getenv("ENVIRONMENT", "").lower() == "test"
+        or os.getenv("PYTEST_CURRENT_TEST") is not None
+    )
+    if is_test_runtime:
+        database_url = "sqlite://"
+    else:
+        database_url = os.getenv("DATABASE_URL") or os.getenv("DATABASE__URL")
+    if database_url:
+        database_settings = DatabaseSettings.model_validate({"DATABASE_URL": database_url})
+
+    app_settings = ApplicationSettings()
+    if is_test_runtime:
+        app_environment = "test"
+    else:
+        app_environment = (
+            os.getenv("APP_ENV")
+            or os.getenv("APP_ENVIRONMENT")
+            or os.getenv("ENVIRONMENT")
+            or os.getenv("APP__ENVIRONMENT")
+        )
+    if app_environment:
+        app_settings = ApplicationSettings.model_validate({"APP_ENV": app_environment})
+
+    return Settings(database=database_settings, app=app_settings)
 
 
 # Instantiated once at import time; all readers share this object via get_settings().
