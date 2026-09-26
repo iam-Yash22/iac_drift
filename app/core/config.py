@@ -26,6 +26,7 @@ from pydantic import (
     AliasChoices,
     BaseModel,
     BeforeValidator,
+    EmailStr,
     Field,
     PostgresDsn,
     RedisDsn,
