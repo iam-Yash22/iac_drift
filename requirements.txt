@@ -40,11 +40,13 @@ pyasn1==0.6.3
 pycparser==3.0
 pydantic==2.13.4
 pydantic_core==2.46.4
+pydantic-settings==2.14.2
 Pygments==2.20.0
 PyMySQL==1.2.0
 pytest==9.0.3
 pytest-asyncio==1.4.0
 python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
 python-hcl2==4.3.5
 python-jose==3.5.0
 python-multipart==0.0.30
