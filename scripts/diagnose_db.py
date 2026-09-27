@@ -1,3 +1,5 @@
+import sys 
+sys.path.insert(0, "/app")
 import os
 from sqlalchemy import create_engine, text
 from app.db.base import Base
