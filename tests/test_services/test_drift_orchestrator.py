@@ -13,7 +13,7 @@ import app.services.aws_client_factory as aws_client_factory
 
 
 @pytest.mark.asyncio
-async def test_orchestrator_calls_crud_and_publishes_event(monkeypatch):
+async def test_orchestrator_calls_crud_and_publishes_event(db_session, monkeypatch):
     mock_account = mock.Mock()
     monkeypatch.setattr(
         orchestrator.crud_account,
@@ -59,7 +59,16 @@ async def test_orchestrator_calls_crud_and_publishes_event(monkeypatch):
     monkeypatch.setattr(orchestrator.crud_drift, "create", mock_create, raising=False)
     monkeypatch.setattr(orchestrator.events, "publish", mock_publish, raising=False)
 
-    result = await orchestrator.orchestrate_account_scan("123")
+    account = account_model.AwsAccount(
+        account_id="123456789012",
+        name="crud and publish account",
+        role_arn="arn:aws:iam::123456789012:role/DriftWatch",
+        is_active=True,
+    )
+    db_session.add(account)
+    db_session.commit()
+
+    result = await orchestrator.orchestrate_account_scan("123", db=db_session)
 
     mock_upsert.assert_awaited_once()
     mock_create.assert_awaited_once()
@@ -129,7 +138,7 @@ async def test_orchestrator_alerts_only_on_drift_transition_and_reconciles(db_se
 
 
 @pytest.mark.asyncio
-async def test_orchestrator_with_no_drift_does_not_publish_event(monkeypatch):
+async def test_orchestrator_with_no_drift_does_not_publish_event(db_session, monkeypatch):
     mock_account = mock.Mock()
     monkeypatch.setattr(
         orchestrator.crud_account,
@@ -161,7 +170,16 @@ async def test_orchestrator_with_no_drift_does_not_publish_event(monkeypatch):
     monkeypatch.setattr(orchestrator.crud_drift, "create", mock.AsyncMock(), raising=False)
     monkeypatch.setattr(orchestrator.events, "publish", mock_publish, raising=False)
 
-    await orchestrator.orchestrate_account_scan("123")
+    account = account_model.AwsAccount(
+        account_id="123456789012",
+        name="no drift publish account",
+        role_arn="arn:aws:iam::123456789012:role/DriftWatch",
+        is_active=True,
+    )
+    db_session.add(account)
+    db_session.commit()
+
+    await orchestrator.orchestrate_account_scan("123", db=db_session)
 
     mock_publish.assert_not_called()
 

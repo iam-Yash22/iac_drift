@@ -81,7 +81,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     await asyncio.to_thread(check_db_connectivity)
     logger.info("database connectivity verified")
 
-    if settings.app.environment != "development":
+    environment_name = (settings.app.environment or "development").lower()
+    if environment_name not in {"development", "test"}:
         admin_password = settings.admin_password.get_secret_value() if settings.admin_password else ""
         if not admin_password.strip() or admin_password == DEFAULT_BOOTSTRAP_ADMIN_PASSWORD:
             raise RuntimeError("ADMIN_PASSWORD must be set and must not equal the default bootstrap password outside development")

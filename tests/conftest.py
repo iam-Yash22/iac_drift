@@ -46,7 +46,7 @@ def db_session(engine):
 
 
 @pytest.fixture(scope="function")
-def client(db_session):
+def client(db_session, monkeypatch):
     app = create_app()
 
     get_db = getattr(db_session_module, "get_db", None)
@@ -56,6 +56,7 @@ def client(db_session):
         app.dependency_overrides[get_db] = _override_get_db
         app.dependency_overrides[api_deps.get_db] = _override_get_db
 
+    monkeypatch.setattr("app.lifespan.SessionLocal", lambda: db_session)
     with TestClient(app) as c:
         yield c
 
