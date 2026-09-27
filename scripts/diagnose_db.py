@@ -1,21 +1,21 @@
-import sys 
+import sys
 sys.path.insert(0, "/app")
 import os
 from sqlalchemy import create_engine, text
-from app.db.base import Base
+from app.core.config import settings
 
-engine = create_engine(os.environ["DATABASE_URL"])
+raw_url = os.environ.get("DATABASE_URL")
+raw_nested = os.environ.get("DATABASE__URL")
+resolved = str(settings.database.url) if settings.database.url else None
+
+print("RAW_DATABASE_URL_HOST:", raw_url.split("@")[-1] if raw_url else None)
+print("RAW_DATABASE__URL_HOST:", raw_nested.split("@")[-1] if raw_nested else None)
+print("RESOLVED_SETTINGS_URL_HOST:", resolved.split("@")[-1] if resolved else None)
+print("RAW_MATCHES_RESOLVED:", raw_url == resolved)
+
+engine = create_engine(resolved)
 with engine.connect() as conn:
-    print("DB:", conn.execute(text("SELECT current_database()")).fetchone())
-    tables = sorted(r[1] for r in conn.execute(text("SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')")).fetchall())
-    print("TABLES:", tables)
-    av = conn.execute(text("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name='alembic_version')")).fetchone()[0]
-    print("ALEMBIC_VERSION_EXISTS:", av)
-    if av:
-        print("ALEMBIC_VERSION_ROWS:", conn.execute(text("SELECT version_num FROM alembic_version")).fetchall())
-    if "users" in tables:
-        print("USERS_COLUMNS:", sorted(c[0] for c in conn.execute(text("SELECT column_name FROM information_schema.columns WHERE table_name='users'")).fetchall()))
-    model_tables = set(Base.metadata.tables.keys())
-    print("MODEL_TABLES_MISSING_LIVE:", model_tables - set(tables))
-    print("LIVE_TABLES_NOT_IN_MODEL:", set(tables) - model_tables)
-    print("DONE")
+    print("RESOLVED_DB_TABLES:", sorted(r[1] for r in conn.execute(text(
+        "SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN ('pg_catalog','information_schema')"
+    )).fetchall()))
+print("DONE")
