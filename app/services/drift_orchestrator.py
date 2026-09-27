@@ -290,8 +290,6 @@ def _state_resource_to_baseline(resource: Dict[str, Any]) -> Optional[Dict[str, 
         baseline["EnvironmentId"] = resource_id
         baseline["EnvironmentArn"] = arn
         baseline["EnvironmentName"] = name
-    if str(name) == "b1-740122274365" or str(resource_id) == "arn:aws:s3:::b1-740122274365":
-        print(f"[DEBUG S3 BASELINE] resource_type={normalized_type} resource_name={name} resource_id={resource_id} tags={baseline['tags']}")
     return baseline
 
 

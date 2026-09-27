@@ -43,7 +43,7 @@ SCAN ENDPOINT ARCHITECTURE DIAGRAM & SUMMARY
 │  │   - account.id (internal)                                          │ │
 │  │   - account.account_id (AWS 12-digit ID)                           │ │
 │  │   - account.name (e.g., "project_account")                         │ │
-│  │   - account.role_arn (e.g., "arn:aws:iam::740122274365:...")       │ │
+│  │   - account.role_arn (e.g., "arn:aws:iam::999999999999:...")       │ │
 │  │   - account.external_id (encrypted, used for cross-account access) │ │
 │  │   - account.is_active (boolean)                                     │ │
 │  └──────────────────────────────────────────────────────────────────────┘ │
@@ -60,7 +60,7 @@ SCAN ENDPOINT ARCHITECTURE DIAGRAM & SUMMARY
 │  │      )                                                              │ │
 │  │   3. STS AssumeRole API call to AWS:                               │ │
 │  │        boto3.sts.assume_role(                                      │ │
-│  │          RoleArn="arn:aws:iam::740122274365:role/...",             │ │
+│  │          RoleArn="arn:aws:iam::999999999999:role/...",             │ │
 │  │          ExternalId="e3a8a66aa5f8a368...",                         │ │
 │  │          RoleSessionName="driftwatch-session"                      │ │
 │  │        )                                                            │ │
@@ -279,3 +279,4 @@ Response shows final status and results
 
 Add AWS credentials to .env file and restart application!
 """
+

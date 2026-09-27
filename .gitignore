@@ -30,3 +30,11 @@ docker/postgres_data/
 .git-old-backup/
 
 .git-old-backup/
+
+diagnose_scan_issue.py
+introduce-drift.py
+frontend/F5_s3only.json
+READY_TO_TEST.txt
+SCAN_ENDPOINT_FLOW.md
+SCAN_ENDPOINT_IMPLEMENTATION_SUMMARY.md
+SETUP_AWS_CREDENTIALS.md

@@ -55,9 +55,10 @@ resource "aws_iam_role" "iac_driftwatch_role" {
 }
 
 output "role_arn" {
-  value = "arn:aws:iam::740122274365:user/iac"
+  value = "arn:aws:iam::999999999999:user/iac"
 }
 
 output "target_account_id" {
-  value = "740122274365"
+  value = "999999999999"
 }
+

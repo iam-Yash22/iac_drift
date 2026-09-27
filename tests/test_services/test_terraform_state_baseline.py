@@ -10,7 +10,7 @@ def test_sample_state_file_contains_applied_bucket_and_three_persistable_resourc
 
     assert any(
         resource.get("resource_type") == "aws_s3_bucket"
-        and resource.get("attributes", {}).get("bucket") == "b1-740122274365"
+        and resource.get("attributes", {}).get("bucket") == "b1-example-bucket"
         for resource in persistable
     )
     assert len(persistable) == 3

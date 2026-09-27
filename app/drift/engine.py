@@ -377,9 +377,6 @@ def compare_resources(
             desired_identity.tags,
             actual_identity.tags,
         )
-        if str(actual_id) == "arn:aws:s3:::b1-740122274365" or str(actual_name) == "b1-740122274365":
-            print(f"[DEBUG S3 MATCH] desired_identity={desired_identity}")
-            print(f"[DEBUG S3 MATCH] actual_identity={actual_identity}")
 
         try:
             result = compare(desired_identity, actual_identity)
@@ -392,8 +389,6 @@ def compare_resources(
             result.is_drifted,
             result.diffs,
         )
-        if str(actual_id) == "arn:aws:s3:::b1-740122274365" or str(actual_name) == "b1-740122274365":
-            print(f"[DEBUG S3 MATCH RESULT] compare_result={result}")
 
         results.append(
             DriftResult(
