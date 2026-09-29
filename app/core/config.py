@@ -162,7 +162,7 @@ class CORSSettings(BaseModel):
     """Cross-Origin Resource Sharing policy."""
 
     allow_origins: CommaSeparatedStrList = Field(
-        default_factory=lambda: ["http://localhost:5173", "http://localhost:8001"],
+        default_factory=lambda: ["http://localhost:5173", "http://localhost:8001", "https://iac-drift-watch.onrender.com"],
         validation_alias=AliasChoices("CORS_ORIGINS", "CORS__ALLOW_ORIGINS"),
         description="Allowed Origin headers (comma-separated in env).",
     )
@@ -365,6 +365,11 @@ def get_settings() -> Settings:
     if database_url:
         database_settings = DatabaseSettings.model_validate({"DATABASE_URL": database_url})
 
+    cors_origins_env = os.getenv("CORS_ORIGINS") or os.getenv("CORS__ALLOW_ORIGINS")
+    cors_settings = CORSSettings()
+    if cors_origins_env:
+        cors_settings.allow_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+
     app_settings = ApplicationSettings()
     if is_test_runtime:
         app_environment = "test"
@@ -378,7 +383,10 @@ def get_settings() -> Settings:
     if app_environment:
         app_settings = ApplicationSettings.model_validate({"APP_ENV": app_environment})
 
-    return Settings(database=database_settings, app=app_settings)
+    resolved_settings = Settings(database=database_settings, app=app_settings, cors=cors_settings)
+    if cors_origins_env:
+        resolved_settings.cors.allow_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+    return resolved_settings
 
 
 # Instantiated once at import time; all readers share this object via get_settings().

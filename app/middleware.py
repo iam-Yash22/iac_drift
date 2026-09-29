@@ -1,13 +1,14 @@
-"""HTTP middleware registration.
+﻿"""HTTP middleware registration.
 
 Registers cross-cutting middleware onto the FastAPI instance. Each inbound
 request passes through this stack (outermost first) before route dispatch::
 
-    Request-ID → Timing → GZip → CORS → route handler
+    Request-ID -> Timing -> GZip -> CORS -> route handler
 """
 
 from __future__ import annotations
 
+import os
 import time
 import uuid
 from typing import TYPE_CHECKING
@@ -51,6 +52,22 @@ class TimingMiddleware(BaseHTTPMiddleware):
         return response
 
 
+def _resolve_cors_origins() -> list[str]:
+    """Resolve allowed CORS origins directly from the environment.
+
+    Bypasses settings.cors.allow_origins, which does not reliably pick up
+    CORS_ORIGINS / CORS__ALLOW_ORIGINS due to nested-model resolution.
+    Reads the raw env var as the source of truth when present; falls back
+    to whatever Settings resolved otherwise.
+    """
+    env_value = os.getenv("CORS_ORIGINS") or os.getenv("CORS__ALLOW_ORIGINS")
+    if env_value:
+        origins = [origin.strip() for origin in env_value.split(",") if origin.strip()]
+    else:
+        origins = list(settings.cors.allow_origins)
+    return list(dict.fromkeys(origins))
+
+
 def register_middleware(app: FastAPI) -> None:
     """Attach cross-cutting middleware to the application.
 
@@ -58,7 +75,7 @@ def register_middleware(app: FastAPI) -> None:
     request-ID, timing, compression, CORS, then the route handler.
     """
     cors = settings.cors
-    allowed_origins = list(dict.fromkeys(cors.allow_origins))
+    allowed_origins = _resolve_cors_origins()
 
     app.add_middleware(
         CORSMiddleware,
