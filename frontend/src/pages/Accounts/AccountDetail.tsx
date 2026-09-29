@@ -856,7 +856,7 @@ export default function AccountDetail() {
                                                 {String(drift.resource_type ?? "Unknown")}
                                               </TableCell>
                                               <TableCell className="px-4 py-3 text-sm">
-                                                <Badge color={severityBadgeColor(normalizedSeverityLabel(String(drift.severity ?? "unknown")))}>
+                                                <Badge color={alertBadgeColor(normalizedSeverityLabel(String(drift.severity ?? "unknown")))}>
                                                   {normalizedSeverityLabel(String(drift.severity ?? "unknown"))}
                                                 </Badge>
                                               </TableCell>
